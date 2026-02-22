@@ -3,7 +3,9 @@ import { evaluate } from 'mathjs';
 export interface FormulaContext {
   $spot: number;
   $weight: number;
-  [key: string]: number;
+  $facon?: number;
+  $aufschlag?: number;
+  [key: string]: number | undefined;
 }
 
 /**
@@ -19,7 +21,10 @@ export function evaluateFormula(formula: string, context: FormulaContext): numbe
   // Variablen durch Werte ersetzen (längste zuerst, um Teilersetzungen zu vermeiden)
   const keys = Object.keys(context).sort((a, b) => b.length - a.length);
   for (const key of keys) {
-    expr = expr.replaceAll(key, String(context[key]));
+    const val = context[key];
+    if (val !== undefined) {
+      expr = expr.replaceAll(key, String(val));
+    }
   }
 
   try {
@@ -37,7 +42,7 @@ export function evaluateFormula(formula: string, context: FormulaContext): numbe
  */
 export function validateFormula(formula: string): { valid: boolean; error?: string } {
   try {
-    const testContext: FormulaContext = { $spot: 100, $weight: 1 };
+    const testContext: FormulaContext = { $spot: 100, $weight: 1, $facon: 10, $aufschlag: 1.02 };
     const result = evaluateFormula(formula, testContext);
     if (isNaN(result) || !isFinite(result)) {
       return { valid: false, error: 'Formel ergibt keinen gültigen Wert' };

@@ -27,6 +27,9 @@ export function ArticleForm({ onSave, onCancel }: ArticleFormProps) {
   const [sku, setSku] = useState('');
   const [weightGrams, setWeightGrams] = useState(0);
   const [priceType, setPriceType] = useState<'verkauf' | 'ankauf'>('verkauf');
+  const [faconCost, setFaconCost] = useState(0);
+  const [faconType, setFaconType] = useState<'absolute' | 'percentage'>('absolute');
+  const [taxType, setTaxType] = useState<'steuerfrei' | 'regelbesteuert'>('steuerfrei');
   const [isActive, setIsActive] = useState(true);
   const [isInShop, setIsInShop] = useState(false);
 
@@ -64,6 +67,33 @@ export function ArticleForm({ onSave, onCancel }: ArticleFormProps) {
             <SelectContent>
               <SelectItem value="verkauf">Verkauf</SelectItem>
               <SelectItem value="ankauf">Ankauf</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-3 gap-4">
+        <div className="space-y-2">
+          <Label>Faconkosten</Label>
+          <Input type="number" step="0.01" value={faconCost} onChange={e => setFaconCost(parseFloat(e.target.value) || 0)} className="font-mono" />
+        </div>
+        <div className="space-y-2">
+          <Label>Facon-Typ</Label>
+          <Select value={faconType} onValueChange={v => setFaconType(v as 'absolute' | 'percentage')}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="absolute">Absolut (EUR)</SelectItem>
+              <SelectItem value="percentage">Prozentual (%)</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-2">
+          <Label>Besteuerung</Label>
+          <Select value={taxType} onValueChange={v => setTaxType(v as 'steuerfrei' | 'regelbesteuert')}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="steuerfrei">Steuerfrei</SelectItem>
+              <SelectItem value="regelbesteuert">Regelbesteuert (19%)</SelectItem>
             </SelectContent>
           </Select>
         </div>

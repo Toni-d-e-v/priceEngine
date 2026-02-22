@@ -25,10 +25,20 @@ export default function ArticlesPage() {
     { key: 'sku', header: 'SKU', render: (a) => <code className="text-xs">{a.sku}</code> },
     { key: 'name', header: 'Name' },
     { key: 'metalId', header: 'Metall', render: (a) => {
-      const names: Record<number, string> = { 1: 'Gold', 2: 'Silber', 3: 'Platin', 4: 'Palladium' };
+      const names: Record<number, string> = { 1: 'Gold', 2: 'Silber', 3: 'Platin', 4: 'Kupfer' };
       return names[a.metalId] ?? a.metalId;
     }},
     { key: 'weightGrams', header: 'Gewicht (g)', render: (a) => <span className="font-mono">{a.weightGrams}</span> },
+    { key: 'faconCost', header: 'Facon', render: (a) => (
+      <span className="font-mono text-sm">
+        {a.faconCost.toLocaleString('de-DE', { minimumFractionDigits: 2 })} {a.faconType === 'absolute' ? '€' : '%'}
+      </span>
+    )},
+    { key: 'taxType', header: 'Besteuerung', render: (a) => (
+      <Badge variant={a.taxType === 'regelbesteuert' ? 'default' : 'secondary'}>
+        {a.taxType === 'steuerfrei' ? 'Steuerfrei' : 'Regelb. 19%'}
+      </Badge>
+    )},
     { key: 'isActive', header: 'Status', render: (a) => (
       <Badge variant={a.isActive ? 'default' : 'secondary'} className={a.isActive ? 'bg-green-600' : ''}>
         {a.isActive ? 'Aktiv' : 'Inaktiv'}

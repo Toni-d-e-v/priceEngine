@@ -33,7 +33,7 @@ export default function SpotRulesVerkaufPage() {
   const activeRule = verkaufRules.find(r => r.isActive && r.ruleType === 'standard');
   const currentSpot = activeRule?.calculatedValue ?? spotPrice;
 
-  const metalNames: Record<number, string> = { 1: 'Gold', 2: 'Silver', 3: 'Platin', 4: 'Palladium' };
+  const metalNames: Record<number, string> = { 1: 'Gold', 2: 'Silber', 3: 'Platin', 4: 'Kupfer' };
 
   function handleEdit(rule: SpotRule) {
     setEditRule(rule);

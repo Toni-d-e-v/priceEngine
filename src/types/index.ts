@@ -1,9 +1,10 @@
 // ============ METAL RATES ============
 export interface Metal {
   id: number;
-  symbol: 'XAU' | 'XAG' | 'XPT' | 'XPD';
+  symbol: 'XAU' | 'XAG' | 'XPT' | 'XPD' | 'XCU';
   name: string;
   unit: string;
+  globalSurcharge: number;
   isActive: boolean;
 }
 
@@ -47,7 +48,8 @@ export interface CustomerGroup {
   name: string;
   code: string;
   description?: string;
-  discountPercent: number;
+  surchargePercent: number;
+  direction: PriceDirection;
   isActive: boolean;
 }
 
@@ -74,6 +76,10 @@ export interface Article {
   priceType: PriceDirection;
   formulaId?: number;
   formula?: Formula;
+  articleGroupId?: number;
+  faconCost: number;
+  faconType: 'absolute' | 'percentage';
+  taxType: 'steuerfrei' | 'regelbesteuert';
   isActive: boolean;
   isInShop: boolean;
   country: string;
@@ -89,7 +95,7 @@ export interface ArticlePrice {
   formula: string;
   spotPricePerGram: number;
   weightGrams: number;
-  prestashopPrice: number;
+  taxAmount: number;
   nettoPrice: number;
   bruttoPrice: number;
   priceDate: string;
@@ -147,6 +153,31 @@ export type Permission =
   | 'manage_articles'
   | 'manage_users'
   | 'manage_roles';
+
+// ============ TAX MAPPINGS ============
+export interface TaxMapping {
+  id: number;
+  code: string;
+  name: string;
+  rate: number;
+}
+
+// ============ ARTICLE GROUPS ============
+export interface ArticleGroup {
+  id: number;
+  code: string;
+  name: string;
+  description?: string;
+  isActive: boolean;
+}
+
+// ============ ARTICLE GROUP SURCHARGES ============
+export interface ArticleGroupSurcharge {
+  id: number;
+  articleGroupId: number;
+  customerGroupId: number;
+  surchargePercent: number;
+}
 
 // ============ API TYPES ============
 export interface ApiResponse<T> {

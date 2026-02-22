@@ -20,6 +20,7 @@ import {
   Package,
   Factory,
   Truck,
+  Receipt,
   Calendar,
   Shield,
   UserCheck,
@@ -28,6 +29,9 @@ import {
   ChevronRight,
   Menu,
   X,
+  History,
+  Layers,
+  Grid3X3,
 } from 'lucide-react';
 import { useState, useEffect, useCallback } from 'react';
 import type { SpotRule } from '@/types';
@@ -46,7 +50,7 @@ const METAL_LABELS: Record<number, { symbol: string; name: string }> = {
   1: { symbol: 'Au', name: 'Gold' },
   2: { symbol: 'Ag', name: 'Silber' },
   3: { symbol: 'Pt', name: 'Platin' },
-  4: { symbol: 'Pd', name: 'Palladium' },
+  4: { symbol: 'Cu', name: 'Kupfer' },
 };
 
 const mainNav: NavItem[] = [
@@ -54,6 +58,7 @@ const mainNav: NavItem[] = [
   { label: 'Spot Verkauf', href: '/spot-rules/verkauf', icon: <TrendingUp className="h-[18px] w-[18px]" /> },
   { label: 'Spot Ankauf', href: '/spot-rules/ankauf', icon: <TrendingDown className="h-[18px] w-[18px]" /> },
   { label: 'Produktpreise', href: '/products', icon: <ShoppingCart className="h-[18px] w-[18px]" /> },
+  { label: 'Kurshistorie', href: '/rate-history', icon: <History className="h-[18px] w-[18px]" /> },
   { label: 'PS Import', href: '/import', icon: <Upload className="h-[18px] w-[18px]" /> },
   { label: 'Konfigurator', href: '/configurator', icon: <Settings className="h-[18px] w-[18px]" /> },
   { label: 'Logs', href: '/logs', icon: <FileText className="h-[18px] w-[18px]" /> },
@@ -63,8 +68,11 @@ const masterDataNav: NavItem[] = [
   { label: 'Kundengruppen', href: '/master-data/customer-groups', icon: <Users className="h-[18px] w-[18px]" /> },
   { label: 'Formeln', href: '/master-data/formulas', icon: <BookOpen className="h-[18px] w-[18px]" /> },
   { label: 'Artikel', href: '/master-data/articles', icon: <Package className="h-[18px] w-[18px]" /> },
+  { label: 'Artikelgruppen', href: '/master-data/article-groups', icon: <Layers className="h-[18px] w-[18px]" /> },
+  { label: 'Gruppen-Zuschläge', href: '/master-data/article-group-surcharges', icon: <Grid3X3 className="h-[18px] w-[18px]" /> },
   { label: 'Hersteller', href: '/master-data/manufacturers', icon: <Factory className="h-[18px] w-[18px]" /> },
   { label: 'Lieferanten', href: '/master-data/suppliers', icon: <Truck className="h-[18px] w-[18px]" /> },
+  { label: 'Steuerzuordnung', href: '/master-data/tax-mappings', icon: <Receipt className="h-[18px] w-[18px]" /> },
   { label: 'Feiertage', href: '/holidays', icon: <Calendar className="h-[18px] w-[18px]" /> },
   { label: 'Rollen', href: '/master-data/roles', icon: <Shield className="h-[18px] w-[18px]" /> },
   { label: 'Benutzer', href: '/master-data/users', icon: <Users className="h-[18px] w-[18px]" /> },

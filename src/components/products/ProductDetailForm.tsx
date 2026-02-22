@@ -5,6 +5,13 @@ import type { Article, ArticlePrice, CustomerGroup } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { FormulaEditor } from '@/components/common/FormulaEditor';
 import {
@@ -37,6 +44,9 @@ interface ProductDetailFormProps {
 export function ProductDetailForm({ article, price, customerGroup, spotPrice }: ProductDetailFormProps) {
   const [formula, setFormula] = useState(price.formula);
   const [weight, setWeight] = useState(String(article.weightGrams));
+  const [faconCost, setFaconCost] = useState(article.faconCost);
+  const [faconType, setFaconType] = useState(article.faconType);
+  const [taxType, setTaxType] = useState(article.taxType);
 
   function handleSave() {
     toast.success('Preis gespeichert (Mock)');
@@ -92,6 +102,39 @@ export function ProductDetailForm({ article, price, customerGroup, spotPrice }: 
                   </Button>
                 ))}
               </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-3 gap-4">
+            <div className="space-y-2">
+              <Label>Faconkosten</Label>
+              <Input
+                type="number"
+                step="0.01"
+                value={faconCost}
+                onChange={e => setFaconCost(parseFloat(e.target.value) || 0)}
+                className="font-mono"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Facon-Typ</Label>
+              <Select value={faconType} onValueChange={v => setFaconType(v as 'absolute' | 'percentage')}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="absolute">Absolut (EUR)</SelectItem>
+                  <SelectItem value="percentage">Prozentual (%)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Besteuerung</Label>
+              <Select value={taxType} onValueChange={v => setTaxType(v as 'steuerfrei' | 'regelbesteuert')}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="steuerfrei">Steuerfrei</SelectItem>
+                  <SelectItem value="regelbesteuert">Regelbesteuert (19%)</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
 

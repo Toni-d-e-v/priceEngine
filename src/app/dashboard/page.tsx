@@ -1,7 +1,8 @@
 'use client';
 
 import { useApi } from '@/hooks/useApi';
-import { getLatestRates } from '@/lib/api/endpoints/rates';
+import { getLatestRates, getMetals } from '@/lib/api/endpoints/rates';
+import { getAllSpotRules } from '@/lib/api/endpoints/spot-rules';
 import { MetalRateTable } from '@/components/dashboard/MetalRateTable';
 import { MetalRateCard } from '@/components/dashboard/MetalRateCard';
 import { BestPriceSection } from '@/components/dashboard/BestPriceSection';
@@ -11,10 +12,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { RefreshCw } from 'lucide-react';
 
 export default function DashboardPage() {
-  const { data: rates, isLoading, refetch } = useApi(() => getLatestRates(), []);
+  const { data: rates, isLoading: ratesLoading, refetch } = useApi(() => getLatestRates(), []);
+  const { data: metals, isLoading: metalsLoading } = useApi(() => getMetals(), []);
+  const { data: spotRules, isLoading: rulesLoading } = useApi(() => getAllSpotRules(), []);
 
-  if (isLoading) return <LoadingSpinner />;
-  if (!rates) return <p className="text-muted-foreground">Keine Daten verfügbar</p>;
+  if (ratesLoading || metalsLoading || rulesLoading) return <LoadingSpinner />;
+  if (!rates || !metals || !spotRules) return <p className="text-muted-foreground">Keine Daten verfügbar</p>;
 
   return (
     <div className="space-y-6">
@@ -34,20 +37,20 @@ export default function DashboardPage() {
         </Button>
       </div>
 
-      {/* Rate Cards */}
+      {/* Rate Cards — Spot(0) only */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         {rates.map(rate => (
           <MetalRateCard key={rate.id} rate={rate} />
         ))}
       </div>
 
-      {/* Rate Table */}
+      {/* Rate Table — Full chain: Spot(0) → Spot(1) → Spot(2) */}
       <Card>
         <CardHeader>
           <CardTitle>Aktuelle Metallkurse</CardTitle>
         </CardHeader>
         <CardContent>
-          <MetalRateTable rates={rates} />
+          <MetalRateTable rates={rates} metals={metals} spotRules={spotRules} />
         </CardContent>
       </Card>
 

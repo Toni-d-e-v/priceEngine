@@ -5,9 +5,9 @@ import type { SpotRule } from '@/types';
 
 const METALS = [
   { id: 1, name: 'GOLD' },
-  { id: 2, name: 'SILVER' },
+  { id: 2, name: 'SILBER' },
   { id: 3, name: 'PLATIN' },
-  { id: 4, name: 'PALLADIUM' },
+  { id: 4, name: 'KUPFER' },
 ];
 
 function formatEuro(value: number): string {

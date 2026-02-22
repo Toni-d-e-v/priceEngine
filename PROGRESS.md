@@ -81,3 +81,128 @@
 
 ### Build Verification ✅
 - `npx next build` compiles successfully with 22 routes, no TypeScript errors
+
+---
+
+## Step A – Frontend Update per Spec V1.01 ✅ 2026-02-22
+
+Alle Änderungen gemäß `VICTOREANUM.PriceEngine.Umsetzung_V1.01_WORK.pdf` umgesetzt.
+Vollständige Referenz: `SPEC_V1_01_CHANGES.md`
+
+### Types & Data Layer
+- `src/types/index.ts`: Metal +XCU +globalSurcharge; CustomerGroup discountPercent→surchargePercent +direction; Article +faconCost +faconType +taxType; ArticlePrice -prestashopPrice +taxAmount; Neue Interfaces: TaxMapping, ArticleGroupSurcharge
+- `src/lib/sku/constants.ts`: TAX_CODES -Differenzbesteuert; MATERIAL_TO_SYMBOL +Cu→XCU
+- `src/lib/formula/evaluator.ts`: validateFormula Test-Context +$facon +$aufschlag
+- `src/lib/api/mock-data.ts`: Metalle Palladium→Kupfer(XCU), +globalSurcharge, Silver→Silber; Kundengruppen neue Namen/Codes/surchargePercent/direction; Formeln +$facon/$aufschlag; Artikel +facon/tax Felder; Preise -prestashopPrice +taxAmount; +mockTaxMappings; Kommentare Silver→Silber
+- `src/lib/api/endpoints/tax-mappings.ts`: **Neu** — CRUD Endpunkte
+
+### Dashboard
+- `src/app/dashboard/page.tsx`: Fetcht jetzt metals für globalSurcharge, übergibt an MetalRateCard/Table
+- `MetalRateCard.tsx`: Zeigt Spot(1) = Spot(0) + globalSurcharge
+- `MetalRateTable.tsx`: Neue Spalten: Aufschlag (editierbar), EUR (Spot 1), Formel Spot(1)
+
+### Spot Rules
+- `MetalSelector.tsx`: PALLADIUM/SILVER → KUPFER/SILBER
+- `verkauf/page.tsx`, `ankauf/page.tsx`: metalNames Palladium→Kupfer, Silver→Silber
+
+### Kalkulationsliste (Produktpreise)
+- `ProductList.tsx`: +formulas Prop, Faconkosten/Steuertyp Badges im Header, neue Spalten: Formelname, Klartext-Formel, Faconkosten (inline-edit), Auf-/Abschlag (read-only), Kupferbarren Label
+- `ProductPriceRow.tsx`: Formelname Badge (oder "individuell"), Klartext-Formel resolved, Faconkosten inline-editierbar, Aufschlag Badge, taxAmount statt prestashopPrice
+- `products/page.tsx`: Fetcht jetzt auch Formeln
+
+### Preis-Detail
+- `ProductDetailForm.tsx`: +Faconkosten, +Facon-Typ Selector, +Besteuerung Selector
+
+### Stammdaten
+- `customer-groups/page.tsx`: Rabatt(%)→Aufschlag(%)
+- `articles/page.tsx`: Palladium→Kupfer
+- `ArticleForm.tsx`: +faconCost, +faconType, +taxType Felder
+- `tax-mappings/page.tsx`: **Neu** — Steuerzuordnung CRUD-Seite
+
+### Layout
+- `Sidebar.tsx`: Pd→Cu/Kupfer, +Steuerzuordnung Nav-Item (+Receipt Icon)
+- `BestPriceSection.tsx`: Palladium→Kupfer, Silver→Silber
+
+### Build Verification ✅
+- `npx next build` → 23 Routen, 0 TypeScript-Fehler (inkl. neue /master-data/tax-mappings)
+
+---
+
+## Step A.1 – Audit-Fixes ✅ 2026-02-22
+
+Alle kritischen Issues aus dem Deep-Audit behoben.
+
+### FormulaContext Interface
+- `src/lib/formula/evaluator.ts`: FormulaContext erweitert um explizite `$facon?: number` und `$aufschlag?: number` Felder; `undefined`-Check in Variable-Substitution
+
+### Mock-Preise Neuberechnung
+- `src/lib/api/mock-data.ts`: Alle mockArticlePrices komplett neuberechnet mit korrekten Spot(2)-Werten und Formel-Auswertung
+  - Gold VK Spot(2)=113.4101, Silber VK=1.3458, Ankauf-Spots korrekt
+  - Aufschlag-Faktoren: R(1.0), M(1.026), H(1.02), P(1.042), A(1.0)
+  - Jeder Preis hat dokumentierte Berechnungsherleitung als Kommentar
+- **Artikel 6 (Silber 1kg, regelbesteuert)**: 5 neue Preise mit korrekter Steuerberechnung
+  - taxAmount = nettoPrice * 0.19, bruttoPrice = nettoPrice + taxAmount
+
+### Stammdaten-Seiten
+- `articles/page.tsx`: +Facon-Spalte (Betrag + Typ), +Besteuerung-Spalte (Badge)
+- `customer-groups/page.tsx`: +Richtung-Spalte (Verkauf/Ankauf Badge)
+
+### Build Verification ✅
+- `npx next build` → 23 Routen, 0 TypeScript-Fehler
+
+---
+
+## Step A.2 – Spot(2) Integration auf Dashboard ✅ 2026-02-22
+
+Dashboard zeigt jetzt den kompletten Spot-Preis-Kette: Spot(0) → Spot(1) → Spot(2).
+
+### Dashboard Page
+- `src/app/dashboard/page.tsx`: Fetcht jetzt zusätzlich `getAllSpotRules()`, berechnet aktive VK-Regel pro Metall, übergibt `activeRule` an Cards und Table
+
+### MetalRateCard
+- `MetalRateCard.tsx`: Komplett überarbeitet — zeigt Spot(2) als Hauptpreis ("Kalkulationspreis"), darunter aufgeschlüsselt: Spot(0) Börse, +Aufschlag, =Spot(1), Zeitregel mit Formel
+
+### MetalRateTable
+- `MetalRateTable.tsx`: Neue Spalten "Zeitregel" (aktive Regel mit Formel + Name) und "EUR Spot(2)" (fett, grün hervorgehoben); Spot(2) wird aus `activeRule.calculatedValue` gelesen; alte "Formel Spot(1)" Spalte entfernt
+
+### Build Verification ✅
+- `npx next build` → 23 Routen, 0 TypeScript-Fehler
+
+---
+
+## Step A.3 – Dashboard Spot(0)-Kartice + Fehlende Spec-Seiten ✅ 2026-02-22
+
+Dashboard-Kartice zeigen jetzt nur Spot(0) (wie im PDF), Tabelle zeigt den Spot-Lanac.
+4 fehlende Features aus der Spec V1.01 ergänzt.
+
+### Dashboard
+- `MetalRateCard.tsx`: Zurück auf reines Spot(0) — nur Börsenpreis + USD (wie im PDF-Screenshot)
+- `MetalRateTable.tsx`: Komplettkette Spot(0) → Aufschlag → Spot(1) → Zeitregel → **Spot(2)** (grün, bold)
+- `dashboard/page.tsx`: Vereinfacht — Cards bekommen nur `rate`, Table bekommt `spotRules`
+
+### Neue Seiten (3 Stück, +3 Routen)
+- `/master-data/article-groups` — **Artikelgruppen** CRUD (GB, SB, PB, KB, GM, SM)
+- `/master-data/article-group-surcharges` — **Artikelgruppen × Preisgruppen Zuschläge** Matrix-Tabelle (editierbar, VK-Gruppen)
+- `/rate-history` — **Kurshistorie** mit Filter nach Metall, Quelle (Auto/Manuell), Datum-Von/Bis
+
+### Neue Dateien
+- `src/lib/api/endpoints/article-groups.ts` — CRUD + Surcharges Endpunkte
+- `src/lib/api/endpoints/rate-history.ts` — getRateHistory()
+- `src/types/index.ts`: Neues Interface `ArticleGroup { id, code, name, description, isActive }`; Article +articleGroupId
+
+### Mock-Daten
+- `mockArticleGroups` (6 Gruppen: Gold/Silber/Platin/Kupfer-Barren, Gold/Silber-Münzen)
+- `mockArticleGroupSurcharges` (24 Einträge: 6 Gruppen × 4 VK-Preisgruppen)
+- `mockRateHistory` (17 historische Kurseinträge inkl. 1 manuell, 4 Metalle, mehrere Tage)
+
+### Kalkulationsliste (Produktpreise)
+- `products/page.tsx`: Neuer **Preisgruppe-Filter** (Dropdown mit allen Kundengruppen), filtert Preise nach Gruppe
+
+### Sidebar
+- +Kurshistorie Nav-Item (History Icon) in Hauptnavigation
+- +Artikelgruppen Nav-Item (Layers Icon) in Stammdaten
+- +Gruppen-Zuschläge Nav-Item (Grid3X3 Icon) in Stammdaten
+
+### Build Verification ✅
+- `npx next build` → **26 Routen**, 0 TypeScript-Fehler
+- Nächster Schritt: Phase 1 (Backend + Datenbankanbindung)

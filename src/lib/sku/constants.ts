@@ -55,9 +55,8 @@ export const PRODUCT_CODES: SKUCodeEntry[] = [
 
 // ============ Besteuerungs-Codes ============
 export const TAX_CODES: TaxCodeEntry[] = [
-  { code: 'o', name: 'Ohne Steuer', rate: 0 },
+  { code: 'o', name: 'Ohne Steuer (steuerfrei)', rate: 0 },
   { code: 'r', name: 'Regelbesteuert (19%)', rate: 19 },
-  { code: 'd', name: 'Differenzbesteuert', rate: 0 },
 ];
 
 // ============ Hersteller-Codes ============
@@ -150,4 +149,5 @@ export const MATERIAL_TO_SYMBOL: Record<string, string> = {
   Ag: 'XAG',
   Pt: 'XPT',
   Pd: 'XPD',
+  Cu: 'XCU',
 };

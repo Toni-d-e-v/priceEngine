@@ -5,16 +5,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const METAL_NAMES: Record<number, string> = {
   1: 'Gold',
-  2: 'Silver',
+  2: 'Silber',
   3: 'Platin',
-  4: 'Palladium',
+  4: 'Kupfer',
 };
 
 const METAL_COLORS: Record<number, string> = {
   1: 'text-yellow-600',
   2: 'text-gray-400',
   3: 'text-blue-400',
-  4: 'text-purple-400',
+  4: 'text-orange-500',
 };
 
 function formatNumber(value: number): string {

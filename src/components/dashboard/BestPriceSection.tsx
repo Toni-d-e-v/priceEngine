@@ -5,9 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const METAL_NAMES: Record<number, string> = {
   1: 'Gold',
-  2: 'Silver',
+  2: 'Silber',
   3: 'Platin',
-  4: 'Palladium',
+  4: 'Kupfer',
 };
 
 function formatNumber(value: number): string {
